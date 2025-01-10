@@ -28,3 +28,11 @@ def create_author(db: Session, author: schemas.AuthorCreate):
     db.refresh(db_author)
 
     return db_author
+
+
+def delete_author(db: Session, author_id: int):
+    db_author = get_author(db, author_id)
+    db.delete(db_author)
+    db.commit()
+
+    return db_author

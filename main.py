@@ -54,6 +54,20 @@ def read_single_author(author_id: int, db: Session = Depends(get_db)):
     return db_author
 
 
+@app.post("/authors/{author_id}/", response_model=schemas.Author)
+def read_single_author(
+        author_id: int,
+        author: schemas.Author,
+        db: Session = Depends(get_db)
+):
+    db_author = crud.get_author(db=db, author_id=author_id)
+
+    if db_author is None:
+        raise HTTPException(status_code=404, detail="Author not found")
+
+    return crud.update_author(db=db, db_author=db_author, author=author)
+
+
 @app.delete("/authors/{author_id}/")
 def delete_author(author_id: int, db: Session = Depends(get_db)):
     db_author = crud.get_author(db=db, author_id=author_id)

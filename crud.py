@@ -17,7 +17,10 @@ def get_author_by_name(db: Session, name: str):
     )
 
 
-def create_author(db: Session, author: schemas.AuthorCreate):
+def create_author(
+        db: Session,
+        author: schemas.AuthorCreate
+) -> models.DBAuthor:
     db_author = models.DBAuthor(
         name=author.name,
         bio=author.bio,
@@ -30,7 +33,19 @@ def create_author(db: Session, author: schemas.AuthorCreate):
     return db_author
 
 
-def delete_author(db: Session, author_id: int):
+def update_author(
+        db: Session,
+        db_author: models.DBAuthor,
+        author: schemas.Author
+) -> models.DBAuthor:
+    for key, value in author.dict().items():
+        if not (getattr(db_author, key) == getattr(author, key)):
+            setattr(db_author, key, value)
+            db.commit()
+    return db_author
+
+
+def delete_author(db: Session, author_id: int) -> models.DBAuthor:
     db_author = get_author(db, author_id)
     db.delete(db_author)
     db.commit()

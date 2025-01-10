@@ -52,3 +52,13 @@ def read_single_author(author_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Author not found")
 
     return db_author
+
+
+@app.delete("/authors/{author_id}/")
+def delete_author(author_id: int, db: Session = Depends(get_db)):
+    db_author = crud.get_author(db=db, author_id=author_id)
+    if db_author is None:
+        raise HTTPException(status_code=404, detail="Author not found")
+    db_author = crud.delete_author(db=db, author_id=author_id)
+
+    return db_author

@@ -31,7 +31,7 @@ class AuthorCreate(AuthorBase):
     pass
 
 
-class AuthorDetail(AuthorBase):
+class Author(AuthorBase):
     id: int
     books: List[BookBase] = []
 

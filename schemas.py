@@ -26,6 +26,10 @@ class BookDetail(BookBase):
         orm_mode = True
 
 
+class BookList(BaseModel):
+    id: int
+
+
 class AuthorBase(BaseModel):
     name: str
     bio: str
@@ -37,7 +41,7 @@ class AuthorCreate(AuthorBase):
 
 class Author(AuthorBase):
     id: int
-    books: List[BookBase] = []
+    books: List[int] = []
 
     class Config:
         orm_mode = True

@@ -55,7 +55,7 @@ def update_author(
     for key, value in author.dict().items():
         if not (getattr(db_author, key) == getattr(author, key)):
             setattr(db_author, key, value)
-            db.commit()
+    db.commit()
     return db_author
 
 
@@ -123,7 +123,7 @@ def update_book(
     for key, value in book.dict().items():
         if not (getattr(db_book, key) == getattr(book, key)):
             setattr(db_book, key, value)
-            db.commit()
+    db.commit()
     return db_book
 
 

@@ -55,7 +55,7 @@ def read_single_author(author_id: int, db: Session = Depends(get_db)):
 
 
 @app.post("/authors/{author_id}/", response_model=schemas.Author)
-def read_single_author(
+def update_single_author(
         author_id: int,
         author: schemas.Author,
         db: Session = Depends(get_db)
@@ -96,3 +96,42 @@ def create_book(
             detail="The book already exists"
         )
     return crud.create_book(db=db, book=book)
+
+
+@app.get("/books/{book_id}/", response_model=schemas.BookDetail)
+def read_single_book(book_id: int, db: Session = Depends(get_db)):
+    book = crud.get_book(db=db, book_id=book_id)
+
+    if book is None:
+        raise HTTPException(status_code=404, detail="Book not found")
+
+    return book
+
+
+@app.post("/books/{book_id}/", response_model=schemas.BookDetail)
+def update_single_book(
+        book_id: int,
+        book: schemas.BookDetail,
+        db: Session = Depends(get_db)
+):
+    db_book = crud.get_book(db=db, book_id=book_id)
+    author = crud.get_author(db=db, author_id=book.author_id)
+
+    if db_book is None:
+        raise HTTPException(status_code=404, detail="The book not found")
+    elif author is None:
+        raise HTTPException(status_code=404, detail="The author not found")
+    elif crud.get_book_by_title(db=db, title=book.title):
+        raise HTTPException(status_code=409, detail="The book already exists")
+
+    return crud.update_book(db=db, db_book=db_book, book=book)
+
+
+@app.delete("/books/{book_id}/")
+def delete_book(book_id: int, db: Session = Depends(get_db)):
+    db_book = crud.get_book(db=db, book_id=book_id)
+    if db_book is None:
+        raise HTTPException(status_code=404, detail="Book not found")
+    db_book = crud.delete_book(db=db, book_id=book_id)
+
+    return db_book

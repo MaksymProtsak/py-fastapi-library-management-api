@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 import models
 import schemas
 
@@ -68,6 +69,10 @@ def get_all_books(db: Session):
     return schema_books
 
 
+def get_book(db: Session, book_id: int):
+    return db.query(models.DBBook).filter(models.DBBook.id == book_id).first()
+
+
 def get_book_by_title(db: Session, title: str):
     return (
         db.query(models.DBBook).filter(models.DBBook.title == title).first()
@@ -95,3 +100,23 @@ def create_book(
         publication_date=db_book.publication_date,
         author_id=db_book.author_id
     )
+
+
+def update_book(
+        db: Session,
+        db_book: models.DBBook,
+        book: schemas.BookDetail
+) -> models.DBBook:
+    for key, value in book.dict().items():
+        if not (getattr(db_book, key) == getattr(book, key)):
+            setattr(db_book, key, value)
+            db.commit()
+    return db_book
+
+
+def delete_book(db: Session, book_id: int) -> models.DBBook:
+    db_book = get_book(db, book_id)
+    db.delete(db_book)
+    db.commit()
+
+    return db_book

@@ -51,3 +51,36 @@ def delete_author(db: Session, author_id: int) -> models.DBAuthor:
     db.commit()
 
     return db_author
+
+
+def get_all_books(db: Session):
+    return db.query(models.DBBook).all()
+
+
+def get_book_by_title(db: Session, title: str):
+    return (
+        db.query(models.DBBook).filter(models.DBBook.title == title).first()
+    )
+
+
+def create_book(
+        db: Session,
+        book: schemas.BookCreate
+) -> schemas.BookDetail:
+    db_book = models.DBBook(
+        title=book.title,
+        summary=book.summary,
+        publication_date=book.publication_date,
+        author_id=book.author_id
+    )
+    db.add(db_book)
+    db.commit()
+    db.refresh(db_book)
+
+    return schemas.BookDetail(
+        id=db_book.id,
+        title=db_book.title,
+        summary=db_book.summary,
+        publication_date=db_book.publication_date,
+        author=db_book.author_id
+    )

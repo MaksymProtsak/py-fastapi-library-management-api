@@ -5,7 +5,20 @@ import schemas
 
 
 def get_all_authors(db: Session):
-    return db.query(models.DBAuthor).all()
+    db_authors = db.query(models.DBAuthor).all()
+    schema_authors = []
+    for author in db_authors:
+        author = schemas.Author(
+            id=author.id,
+            name=author.name,
+            bio=author.bio,
+            books=[
+                book.id
+                for book in author.books
+            ]
+        )
+        schema_authors.append(author)
+    return schema_authors
 
 
 def get_author(db: Session, author_id: int):

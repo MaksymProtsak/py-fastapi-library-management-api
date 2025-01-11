@@ -76,3 +76,23 @@ def delete_author(author_id: int, db: Session = Depends(get_db)):
     db_author = crud.delete_author(db=db, author_id=author_id)
 
     return db_author
+
+
+@app.get("/books/", response_model=list[schemas.BookDetail])
+def get_all_books(db: Session = Depends(get_db)):
+    return crud.get_all_books(db=db)
+
+
+@app.post("/books/", response_model=schemas.BookDetail)
+def create_book(
+    book: schemas.BookCreate,
+    db: Session = Depends(get_db),
+):
+    db_book = crud.get_book_by_title(db=db, title=book.title)
+
+    if db_book:
+        raise HTTPException(
+            status_code=400,
+            detail="The book already exists"
+        )
+    return crud.create_book(db=db, book=book)

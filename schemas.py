@@ -20,7 +20,7 @@ class Book(BookBase):
 
 class BookDetail(BookBase):
     id: int
-    author: int
+    author_id: int
 
     class Config:
         orm_mode = True

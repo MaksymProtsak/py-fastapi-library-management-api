@@ -54,7 +54,18 @@ def delete_author(db: Session, author_id: int) -> models.DBAuthor:
 
 
 def get_all_books(db: Session):
-    return db.query(models.DBBook).all()
+    db_books = db.query(models.DBBook).all()
+    schema_books = [
+        schemas.BookDetail(
+            id=db_book.id,
+            title=db_book.title,
+            summary=db_book.summary,
+            publication_date=db_book.publication_date,
+            author_id=db_book.author_id
+        )
+        for db_book in db_books
+    ]
+    return schema_books
 
 
 def get_book_by_title(db: Session, title: str):
@@ -82,5 +93,5 @@ def create_book(
         title=db_book.title,
         summary=db_book.summary,
         publication_date=db_book.publication_date,
-        author=db_book.author_id
+        author_id=db_book.author_id
     )
